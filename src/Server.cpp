@@ -5,7 +5,7 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
 {
     if (pattern.length() == 1)
     {
-        if (pattern == "\d")
+        if (pattern == "d")
         {
             for (auto c : pattern)
             {
