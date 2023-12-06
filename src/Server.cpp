@@ -10,7 +10,7 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
     }
     else if (pattern == "\\d")
     {
-        for (auto c : pattern)
+        for (auto c : input_line)
         {
             if (isdigit(c))
             {
