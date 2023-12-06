@@ -31,11 +31,24 @@ bool doesContainAlphaNum(const std::string &input_line, const std::string &patte
 
     return false;
 }
+
+bool isNotInGroup(char inputChar, const std::string &group)
+{
+    // Loop over each character in the group and return false if inputChar is found.
+    for (char c : group)
+    {
+        if (inputChar == c)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool match_pattern(const std::string &input_line, const std::string &pattern)
 {
     if (pattern.length() == 1)
     {
-
         return input_line.find(pattern) != std::string::npos;
     }
     else if (pattern == "\\d")
@@ -48,14 +61,30 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
     }
     else if (betweenBrackets(pattern))
     {
-        for (auto c : pattern)
+        if (pattern[1] == '^')
         {
-            if (input_line.find(c) != std::string::npos)
+            int index = 2;
+            while (index < pattern.size() && pattern[index] != ']')
             {
-                return true;
+                if (isNotInGroup(pattern[index], input_line))
+                {
+                    return false;
+                }
             }
+
+            return true;
         }
-        return false;
+        else
+        {
+            for (auto c : pattern)
+            {
+                if (input_line.find(c) != std::string::npos)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
     else
     {
