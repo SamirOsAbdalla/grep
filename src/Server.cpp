@@ -5,6 +5,19 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
 {
     if (pattern.length() == 1)
     {
+        if (pattern == "\d")
+        {
+            for (auto c : pattern)
+            {
+                if (isdigit(c))
+                {
+                    return 1;
+                }
+            }
+
+            return 0;
+        }
+
         return input_line.find(pattern) != std::string::npos;
     }
     else
@@ -32,8 +45,6 @@ int main(int argc, char *argv[])
         std::cerr << "Expected first argument to be '-E'" << std::endl;
         return 1;
     }
-
-    // Uncomment this block to pass the first stage
 
     std::string input_line;
     std::getline(std::cin, input_line);
