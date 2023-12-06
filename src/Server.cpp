@@ -45,6 +45,20 @@ bool isNotInGroup(char inputChar, const std::string &group)
     return true;
 }
 
+bool matchCharacterGroup(const std::string &input_line, const std::string &pattern)
+{
+
+    if (pattern[0] == '^')
+    {
+
+        return input_line.find_first_of(pattern) == std::string::npos;
+    }
+    else
+    {
+        return input_line.find_first_of(pattern) != std::string::npos;
+    }
+}
+
 bool match_pattern(const std::string &input_line, const std::string &pattern)
 {
     if (pattern.length() == 1)
@@ -61,31 +75,7 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
     }
     else if (betweenBrackets(pattern))
     {
-        if (pattern[1] == '^')
-        {
-            int index = 2;
-            while (index < pattern.size() && pattern[index] != ']')
-            {
-                if (!isNotInGroup(pattern[index], input_line))
-                {
-                    return false;
-                }
-                index += 1;
-            }
-
-            return true;
-        }
-        else
-        {
-            for (auto c : pattern)
-            {
-                if (input_line.find(c) != std::string::npos)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        return matchCharacterGroup(input_line, pattern.substr(1, pattern.size() - 2));
     }
     else
     {
