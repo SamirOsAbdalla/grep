@@ -66,7 +66,7 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
             int index = 2;
             while (index < pattern.size() && pattern[index] != ']')
             {
-                if (isNotInGroup(pattern[index], input_line))
+                if (!isNotInGroup(pattern[index], input_line))
                 {
                     return false;
                 }
