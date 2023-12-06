@@ -6,6 +6,31 @@ bool betweenBrackets(const std::string &pattern)
     return pattern.size() > 1 && pattern[0] == '[' && pattern[pattern.size() - 1] == ']';
 }
 
+bool doesContainDigits(const std::string &input_line, const std::string &pattern)
+{
+    for (auto c : input_line)
+    {
+        if (isdigit(c))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool doesContainAlphaNum(const std::string &input_line, const std::string &pattern)
+{
+    for (auto c : input_line)
+    {
+        if (isalnum(c))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 bool match_pattern(const std::string &input_line, const std::string &pattern)
 {
     if (pattern.length() == 1)
@@ -15,27 +40,11 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
     }
     else if (pattern == "\\d")
     {
-        for (auto c : input_line)
-        {
-            if (isdigit(c))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return doesContainDigits(input_line, pattern);
     }
     else if (pattern == "\\w")
     {
-        for (auto c : input_line)
-        {
-            if (isalnum(c))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return doesContainAlphaNum(input_line, pattern);
     }
     else if (betweenBrackets(pattern))
     {
