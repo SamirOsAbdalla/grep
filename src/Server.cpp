@@ -1,6 +1,11 @@
 #include <iostream>
 #include <string>
 
+bool betweenBrackets(const std::string &pattern)
+{
+    return pattern.size() > 1 && pattern[0] == '[' && pattern[pattern.size() - 1] == ']';
+}
+
 bool match_pattern(const std::string &input_line, const std::string &pattern)
 {
     if (pattern.length() == 1)
@@ -30,6 +35,17 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
             }
         }
 
+        return false;
+    }
+    else if (betweenBrackets(pattern))
+    {
+        for (auto c : pattern)
+        {
+            if (input_line.find(c) != std::string::npos)
+            {
+                return true;
+            }
+        }
         return false;
     }
     else
