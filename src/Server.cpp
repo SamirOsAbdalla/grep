@@ -1,86 +1,160 @@
 #include <iostream>
 #include <string>
 
-bool betweenBrackets(const std::string &pattern)
+// bool doesContainDigits(const std::string &input_line, const std::string &pattern)
+// {
+//     for (auto c : input_line)
+//     {
+//         if (isdigit(c))
+//         {
+//             return true;
+//         }
+//     }
+
+//     return false;
+// }
+
+// bool doesContainAlphaNum(const std::string &input_line, const std::string &pattern)
+// {
+//     for (auto c : input_line)
+//     {
+//         if (isalnum(c))
+//         {
+//             return true;
+//         }
+//     }
+
+//     return false;
+// }
+
+// bool isNotInGroup(char inputChar, const std::string &group)
+// {
+//     // Loop over each character in the group and return false if inputChar is found.
+//     for (char c : group)
+//     {
+//         if (inputChar == c)
+//         {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
+
+// bool match_pattern(const std::string &input_line, const std::string &pattern)
+// {
+//     if (pattern.length() == 1)
+//     {
+//         return input_line.find(pattern) != std::string::npos;
+//     }
+//     else if (pattern == "\\d")
+//     {
+//         return doesContainDigits(input_line, pattern);
+//     }
+//     else if (pattern == "\\w")
+//     {
+//         return doesContainAlphaNum(input_line, pattern);
+//     }
+//     else if (betweenBrackets(pattern))
+//     {
+//         return matchCharacterGroup(input_line, pattern.substr(1, pattern.size() - 2));
+//     }
+//     else
+//     {
+//         throw std::runtime_error("Unhandled pattern " + pattern);
+//     }
+// }
+// bool regexp_between_brackets(const std::string &regexp)
+// {
+//     return regexp.size() > 1 && regexp[0] == '[' && regexp[regexp.size() - 1] == ']';
+// }
+
+bool match_character_group(const std::string &regexp, const std::string &text)
 {
-    return pattern.size() > 1 && pattern[0] == '[' && pattern[pattern.size() - 1] == ']';
+    return text.find_first_of(regexp) != std::string::npos;
 }
 
-bool doesContainDigits(const std::string &input_line, const std::string &pattern)
+int match_pattern(const std::string &regexp, const std::string &text)
 {
-    for (auto c : input_line)
+
+    if (regexp.size() == 0)
     {
-        if (isdigit(c))
+
+        return 1;
+    }
+    if (text.size() == 0)
+    {
+        return 0;
+    }
+
+    if (regexp.substr(0, 2) == "\\d")
+    {
+        if (isdigit(text[0]))
         {
-            return true;
+            return match_pattern(regexp.substr(2), text.substr(1));
+        }
+        return match_pattern(regexp, text.substr(1));
+    }
+    else if (regexp.substr(0, 2) == "\\w")
+    {
+        if (isalnum(text[0]))
+        {
+            return match_pattern(regexp.substr(2), text.substr(1));
+        }
+        return match_pattern(regexp, text.substr(1));
+    }
+    else if (regexp[0] == '[')
+    {
+        auto first_closing_bracket_pos = regexp.find("]");
+        if (first_closing_bracket_pos == std::string::npos)
+        {
+            throw std::runtime_error("bad brackets bub");
+        }
+
+        bool are_brackets_negated = (regexp.substr(0, 2) == "[^");
+        if (are_brackets_negated)
+        {
+            if (!match_character_group(regexp.substr(2, first_closing_bracket_pos - 1), text))
+            {
+                return match_pattern(regexp.substr(first_closing_bracket_pos + 1), text.substr(1));
+            }
+
+            return 0;
+        }
+
+        if (match_character_group(regexp.substr(1, first_closing_bracket_pos - 1), text))
+        {
+            return match_pattern(regexp.substr(first_closing_bracket_pos + 1), text.substr(1));
+        }
+        else
+        {
+            return 0;
         }
     }
 
-    return false;
+    if (regexp[0] == text[0])
+    {
+        return match_pattern(regexp.substr(1), text.substr(1));
+    }
+    return match_pattern(regexp, text.substr(1));
 }
 
-bool doesContainAlphaNum(const std::string &input_line, const std::string &pattern)
+int match(const std::string &regexp, std::string &text)
 {
-    for (auto c : input_line)
+    int index = 0;
+
+    do
     {
-        if (isalnum(c))
+
+        if (match_pattern(regexp, text))
         {
-            return true;
+            printf("1\n");
+            return 1;
         }
-    }
+        text = text.substr(1);
+    } while (text != "");
 
-    return false;
-}
-
-bool isNotInGroup(char inputChar, const std::string &group)
-{
-    // Loop over each character in the group and return false if inputChar is found.
-    for (char c : group)
-    {
-        if (inputChar == c)
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool matchCharacterGroup(const std::string &input_line, const std::string &pattern)
-{
-
-    if (pattern[0] == '^')
-    {
-
-        return input_line.find_first_of(pattern) == std::string::npos;
-    }
-    else
-    {
-        return input_line.find_first_of(pattern) != std::string::npos;
-    }
-}
-
-bool match_pattern(const std::string &input_line, const std::string &pattern)
-{
-    if (pattern.length() == 1)
-    {
-        return input_line.find(pattern) != std::string::npos;
-    }
-    else if (pattern == "\\d")
-    {
-        return doesContainDigits(input_line, pattern);
-    }
-    else if (pattern == "\\w")
-    {
-        return doesContainAlphaNum(input_line, pattern);
-    }
-    else if (betweenBrackets(pattern))
-    {
-        return matchCharacterGroup(input_line, pattern.substr(1, pattern.size() - 2));
-    }
-    else
-    {
-        throw std::runtime_error("Unhandled pattern " + pattern);
-    }
+    printf("0\n");
+    return 0;
 }
 
 int main(int argc, char *argv[])
@@ -108,7 +182,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        if (match_pattern(input_line, pattern))
+        if (match(pattern, input_line))
         {
             return 0;
         }
