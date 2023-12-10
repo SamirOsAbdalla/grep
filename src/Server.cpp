@@ -32,6 +32,22 @@ bool matchplus(char c, const std::string &regexp, const std::string &text)
     }
     return 0;
 }
+
+bool matchquestion(char c, const std::string &regexp, const std::string &text)
+{
+    std::string tmp = text;
+    do
+    {
+        if (match_pattern(regexp, tmp))
+        {
+            return 1;
+        }
+        tmp = tmp.substr(1);
+    } while (tmp.size() > 0 && tmp[0] == c);
+
+    return 0;
+}
+
 int match_pattern(const std::string &regexp, const std::string &text)
 {
 
@@ -39,6 +55,11 @@ int match_pattern(const std::string &regexp, const std::string &text)
     {
 
         return 1;
+    }
+
+    if (regexp.size() > 1 && regexp[1] == '?')
+    {
+        return matchquestion(regexp[0], regexp.substr(2), text);
     }
     if (text.size() == 0 && regexp[0] != '$')
     {
@@ -49,6 +70,7 @@ int match_pattern(const std::string &regexp, const std::string &text)
     {
         return matchplus(regexp[0], regexp.substr(0, 1) + regexp.substr(2), text);
     }
+
     if (regexp.substr(0, 2) == "\\d")
     {
         if (isdigit(text[0]))
