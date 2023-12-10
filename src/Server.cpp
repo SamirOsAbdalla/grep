@@ -1,76 +1,17 @@
 #include <iostream>
 #include <string>
 
-// bool doesContainDigits(const std::string &input_line, const std::string &pattern)
-// {
-//     for (auto c : input_line)
-//     {
-//         if (isdigit(c))
-//         {
-//             return true;
-//         }
-//     }
-
-//     return false;
-// }
-
-// bool doesContainAlphaNum(const std::string &input_line, const std::string &pattern)
-// {
-//     for (auto c : input_line)
-//     {
-//         if (isalnum(c))
-//         {
-//             return true;
-//         }
-//     }
-
-//     return false;
-// }
-
-// bool isNotInGroup(char inputChar, const std::string &group)
-// {
-//     // Loop over each character in the group and return false if inputChar is found.
-//     for (char c : group)
-//     {
-//         if (inputChar == c)
-//         {
-//             return false;
-//         }
-//     }
-//     return true;
-// }
-
-// bool match_pattern(const std::string &input_line, const std::string &pattern)
-// {
-//     if (pattern.length() == 1)
-//     {
-//         return input_line.find(pattern) != std::string::npos;
-//     }
-//     else if (pattern == "\\d")
-//     {
-//         return doesContainDigits(input_line, pattern);
-//     }
-//     else if (pattern == "\\w")
-//     {
-//         return doesContainAlphaNum(input_line, pattern);
-//     }
-//     else if (betweenBrackets(pattern))
-//     {
-//         return matchCharacterGroup(input_line, pattern.substr(1, pattern.size() - 2));
-//     }
-//     else
-//     {
-//         throw std::runtime_error("Unhandled pattern " + pattern);
-//     }
-// }
-// bool regexp_between_brackets(const std::string &regexp)
-// {
-//     return regexp.size() > 1 && regexp[0] == '[' && regexp[regexp.size() - 1] == ']';
-// }
-
-bool match_character_group(const std::string &regexp, const std::string &text)
+bool match_character_group(const std::string &regexp, const char &text)
 {
-    return text.find_first_of(regexp) != std::string::npos;
+    for (auto c : regexp)
+    {
+        if (c == text)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 int match_pattern(const std::string &regexp, const std::string &text)
@@ -113,7 +54,7 @@ int match_pattern(const std::string &regexp, const std::string &text)
         bool are_brackets_negated = (regexp.substr(0, 2) == "[^");
         if (are_brackets_negated)
         {
-            if (!match_character_group(regexp.substr(2, first_closing_bracket_pos - 1), text))
+            if (!match_character_group(regexp.substr(2, first_closing_bracket_pos - 1), text[0]))
             {
                 return match_pattern(regexp.substr(first_closing_bracket_pos + 1), text.substr(1));
             }
@@ -121,7 +62,7 @@ int match_pattern(const std::string &regexp, const std::string &text)
             return 0;
         }
 
-        if (match_character_group(regexp.substr(1, first_closing_bracket_pos - 1), text))
+        if (match_character_group(regexp.substr(1, first_closing_bracket_pos - 1), text[0]))
         {
             return match_pattern(regexp.substr(first_closing_bracket_pos + 1), text.substr(1));
         }
@@ -135,25 +76,29 @@ int match_pattern(const std::string &regexp, const std::string &text)
     {
         return match_pattern(regexp.substr(1), text.substr(1));
     }
-    return match_pattern(regexp, text.substr(1));
+    // return match_pattern(regexp, text.substr(1));
+    return 0;
 }
 
 int match(const std::string &regexp, std::string &text)
 {
-    int index = 0;
 
+    // We need this initial check because the pattern must come at the beginning of the text
+    if (regexp[0] == '^')
+    {
+        return match_pattern(regexp.substr(1), text);
+    }
+    int index = 0;
     do
     {
 
         if (match_pattern(regexp, text))
         {
-            printf("1\n");
             return 1;
         }
         text = text.substr(1);
     } while (text != "");
 
-    printf("0\n");
     return 0;
 }
 
@@ -184,10 +129,12 @@ int main(int argc, char *argv[])
     {
         if (match(pattern, input_line))
         {
+            printf("Match\n");
             return 0;
         }
         else
         {
+            printf("No Match\n");
             return 1;
         }
     }
