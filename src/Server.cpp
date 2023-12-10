@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+int match_pattern(const std::string &regexp, const std::string &text);
 bool match_character_group(const std::string &regexp, const char &text)
 {
     for (auto c : regexp)
@@ -14,6 +15,23 @@ bool match_character_group(const std::string &regexp, const char &text)
     return false;
 }
 
+bool matchplus(char c, const std::string &regexp, const std::string &text)
+{
+
+    std::string tmp = text;
+
+    while (tmp.length() > 0 && tmp[0] == c)
+    {
+
+        if (match_pattern(regexp, tmp))
+        {
+            return true;
+        }
+
+        tmp = tmp.substr(1);
+    }
+    return 0;
+}
 int match_pattern(const std::string &regexp, const std::string &text)
 {
 
@@ -22,11 +40,11 @@ int match_pattern(const std::string &regexp, const std::string &text)
 
         return 1;
     }
-    if (text.size() == 0 && regexp[0] != '$')
-    {
-        return 0;
-    }
 
+    if (regexp[1] == '+')
+    {
+        return matchplus(regexp[0], regexp.substr(0, 1) + regexp.substr(2), text);
+    }
     if (regexp.substr(0, 2) == "\\d")
     {
         if (isdigit(text[0]))
@@ -93,6 +111,11 @@ int match(const std::string &regexp, std::string &text)
     {
         return match_pattern(regexp.substr(1), text);
     }
+    else if (regexp[0] == '+')
+    {
+        throw std::runtime_error("invalid starting operator");
+    }
+
     int index = 0;
     do
     {
