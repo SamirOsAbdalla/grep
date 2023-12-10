@@ -40,6 +40,10 @@ int match_pattern(const std::string &regexp, const std::string &text)
 
         return 1;
     }
+    if (text.size() == 0 && regexp[0] != '$')
+    {
+        return 0;
+    }
 
     if (regexp.size() > 1 && regexp[1] == '+')
     {
