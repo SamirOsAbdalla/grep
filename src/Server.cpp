@@ -22,7 +22,7 @@ int match_pattern(const std::string &regexp, const std::string &text)
 
         return 1;
     }
-    if (text.size() == 0)
+    if (text.size() == 0 && regexp[0] != '$')
     {
         return 0;
     }
@@ -42,6 +42,10 @@ int match_pattern(const std::string &regexp, const std::string &text)
             return match_pattern(regexp.substr(2), text.substr(1));
         }
         return match_pattern(regexp, text.substr(1));
+    }
+    else if (regexp[0] == '$' and regexp.length() == 1)
+    {
+        return text.length() == 0;
     }
     else if (regexp[0] == '[')
     {
@@ -76,6 +80,7 @@ int match_pattern(const std::string &regexp, const std::string &text)
     {
         return match_pattern(regexp.substr(1), text.substr(1));
     }
+
     // return match_pattern(regexp, text.substr(1));
     return 0;
 }
