@@ -41,7 +41,7 @@ int match_pattern(const std::string &regexp, const std::string &text)
         return 1;
     }
 
-    if (regexp[1] == '+')
+    if (regexp.size() > 1 && regexp[1] == '+')
     {
         return matchplus(regexp[0], regexp.substr(0, 1) + regexp.substr(2), text);
     }
