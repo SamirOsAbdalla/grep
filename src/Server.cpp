@@ -20,7 +20,7 @@ bool matchplus(char c, const std::string &regexp, const std::string &text)
 
     std::string tmp = text;
 
-    while (tmp.length() > 0 && tmp[0] == c)
+    while (tmp != "" && tmp[0] == c)
     {
 
         if (match_pattern(regexp, tmp))
@@ -35,17 +35,17 @@ bool matchplus(char c, const std::string &regexp, const std::string &text)
 
 bool matchquestion(char c, const std::string &regexp, const std::string &text)
 {
-    std::string tmp = text;
+    std::string tmp = "a" + text;
     do
     {
+        tmp = tmp.substr(1);
         if (match_pattern(regexp, tmp))
         {
-            return 1;
+            return true;
         }
-        tmp = tmp.substr(1);
-    } while (tmp.size() > 0 && tmp[0] == c);
+    } while (tmp != "" && tmp[0] == c);
 
-    return 0;
+    return false;
 }
 
 int match_pattern(const std::string &regexp, const std::string &text)
