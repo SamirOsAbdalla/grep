@@ -133,7 +133,7 @@ int match_pattern(const std::string &regexp, const std::string &text)
             throw std::runtime_error("poor parentheses pal");
         }
         const std::string substr1 = regexp.substr(1, alternation_op_pos - 1);
-        const std::string substr2 = regexp.substr(alternation_op_pos + 1, first_closing_parenth_pos - 1);
+        const std::string substr2 = regexp.substr(alternation_op_pos + 1, first_closing_parenth_pos - alternation_op_pos - 1);
         return match_pattern(substr1 + regexp.substr(first_closing_parenth_pos + 1), text) || match_pattern(substr2 + regexp.substr(first_closing_parenth_pos + 1), text);
     }
 
