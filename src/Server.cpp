@@ -50,7 +50,6 @@ bool matchquestion(char c, const std::string &regexp, const std::string &text)
 
 int match_pattern(const std::string &regexp, const std::string &text)
 {
-
     if (regexp.size() == 0)
     {
 
@@ -119,13 +118,30 @@ int match_pattern(const std::string &regexp, const std::string &text)
             return 0;
         }
     }
+    else if (regexp[0] == '(')
+    {
+        auto first_closing_parenth_pos = regexp.find(")");
+        if (first_closing_parenth_pos == std::string::npos)
+        {
+            throw std::runtime_error("poor parentheses pal");
+        }
+
+        auto alternation_op_pos = regexp.find("|");
+        if (alternation_op_pos == std::string::npos)
+        {
+            // haven't added character capturing
+            throw std::runtime_error("poor parentheses pal");
+        }
+        const std::string substr1 = regexp.substr(1, alternation_op_pos - 1);
+        const std::string substr2 = regexp.substr(alternation_op_pos + 1, first_closing_parenth_pos - 1);
+        return match_pattern(substr1 + regexp.substr(first_closing_parenth_pos + 1), text) || match_pattern(substr2 + regexp.substr(first_closing_parenth_pos + 1), text);
+    }
 
     if (regexp[0] == text[0] || regexp[0] == '.')
     {
         return match_pattern(regexp.substr(1), text.substr(1));
     }
 
-    // return match_pattern(regexp, text.substr(1));
     return 0;
 }
 
@@ -145,7 +161,6 @@ int match(const std::string &regexp, std::string &text)
     int index = 0;
     do
     {
-
         if (match_pattern(regexp, text))
         {
             return 1;
