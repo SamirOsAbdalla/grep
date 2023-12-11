@@ -20,7 +20,7 @@ bool matchplus(char c, const std::string &regexp, const std::string &text)
 
     std::string tmp = text;
 
-    while (tmp != "" && tmp[0] == c)
+    while (tmp != "" && (tmp[0] == c || c == '.'))
     {
 
         if (match_pattern(regexp, tmp))
@@ -43,7 +43,7 @@ bool matchquestion(char c, const std::string &regexp, const std::string &text)
         {
             return true;
         }
-    } while (tmp != "" && tmp[0] == c);
+    } while (tmp != "" && (tmp[0] == c || c == '.'));
 
     return false;
 }
@@ -120,7 +120,7 @@ int match_pattern(const std::string &regexp, const std::string &text)
         }
     }
 
-    if (regexp[0] == text[0])
+    if (regexp[0] == text[0] || regexp[0] == '.')
     {
         return match_pattern(regexp.substr(1), text.substr(1));
     }
