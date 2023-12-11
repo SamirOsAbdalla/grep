@@ -108,7 +108,6 @@ int match_pattern(const std::string &regexp, const std::string &text)
 
             return 0;
         }
-
         if (match_character_group(regexp.substr(1, first_closing_bracket_pos - 1), text[0]))
         {
             return match_pattern(regexp.substr(first_closing_bracket_pos + 1), text.substr(1));
